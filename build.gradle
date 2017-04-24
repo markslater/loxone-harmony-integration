@@ -29,6 +29,15 @@ task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
 }
 
+dependencies {
+    compile group: 'org.igniterealtime.smack', name: 'smack-core', version: '4.2.0'
+    compile group: 'org.igniterealtime.smack', name: 'smack-java7', version: '4.2.0'
+    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.2.0'
+    compile group: 'org.igniterealtime.smack', name: 'smack-debug', version: '4.2.0'
+    runtime group: 'org.igniterealtime.smack', name: 'smack-sasl-javax', version: '4.2.0'
+
+}
+
 jar {
     manifest {
         attributes 'Main-Class': 'LoxoneHarmonyIntegration'
