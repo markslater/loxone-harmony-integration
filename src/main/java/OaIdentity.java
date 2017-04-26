@@ -15,13 +15,13 @@ final class OaIdentity {
         this.value = value;
     }
 
-    static OaIdentity parseHarmonyHubResponse(String harmonyHubResponse) {
+    static OaIdentity parseHarmonyHubResponse(String harmonyHubResponse) throws OaIdentityParseException {
         final String responseBody = extractResponseBody(harmonyHubResponse);
         final String identity = extractIdentity(responseBody);
         return new OaIdentity(identity);
     }
 
-    private static String extractResponseBody(String harmonyHubResponse) {
+    private static String extractResponseBody(String harmonyHubResponse) throws OaIdentityParseException {
         Optional<String> result = Optional.empty();
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
@@ -39,12 +39,12 @@ final class OaIdentity {
                 xmlStreamReader.close();
             }
         } catch (XMLStreamException e) {
-            e.printStackTrace();
+            throw new OaIdentityParseException("Harmony Hub response is not valid XML", e);
         }
-        return result.orElseThrow(() -> new RuntimeException("Broken"));
+        return result.orElseThrow(() -> new OaIdentityParseException("Harmony Hub response has no content"));
     }
 
-    private static String extractIdentity(String responseBody) {
+    private static String extractIdentity(String responseBody) throws OaIdentityParseException {
         Optional<String> result = Optional.empty();
         final Iterable<String> nameValuePairs = Splitter.on(':').split(responseBody);
         for (String nameValuePair : nameValuePairs) {
@@ -53,10 +53,20 @@ final class OaIdentity {
                 result = Optional.of(nameValuePair.substring(prefix.length()));
             }
         }
-        return result.orElseThrow(() -> new RuntimeException("Broken"));
+        return result.orElseThrow(() -> new OaIdentityParseException("Harmony Hub response does not contain \"identity\" key"));
     }
 
     String asString() {
         return value;
+    }
+
+    static final class OaIdentityParseException extends Exception {
+        OaIdentityParseException(String message) {
+            super(message);
+        }
+
+        OaIdentityParseException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }
