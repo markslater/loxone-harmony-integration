@@ -99,7 +99,7 @@ public final class LoxoneHarmonyIntegration {
         // all the other jibber jabber can go straight in the bin.
         // once we've got username and password we make *another* connection using those rather than the stuff we had before.
         final OaIdentity oaIdentity = OaIdentity.parseHarmonyHubResponse(((UnparsedIQ) stanza).getContent().toString());
-        System.out.println("oaIdentity.asPassword() = " + oaIdentity.asPassword());
+        System.out.println("oaIdentity.asString() = " + oaIdentity.asString());
         authConnection.disconnect();
 
     }

@@ -8,6 +8,7 @@ import java.io.StringReader;
 import java.util.Optional;
 
 final class OaIdentity {
+
     private final String value;
 
     private OaIdentity(String value) {
@@ -55,7 +56,7 @@ final class OaIdentity {
         return result.orElseThrow(() -> new RuntimeException("Broken"));
     }
 
-    String asPassword() {
+    String asString() {
         return value;
     }
 }
