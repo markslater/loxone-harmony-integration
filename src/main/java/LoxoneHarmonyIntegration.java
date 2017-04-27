@@ -3,9 +3,7 @@ import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.*;
 import org.jivesoftware.smack.provider.IQProvider;
 import org.jivesoftware.smack.provider.ProviderManager;
@@ -17,12 +15,6 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.xmlpull.v1.XmlPullParser;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
-import java.io.StringReader;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -59,7 +51,6 @@ public final class LoxoneHarmonyIntegration {
             @Override
             protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                 ParserUtils.assertAtStartTag(parser);
-                int parserDepth = parser.getDepth();
                 Stanza stanza = null;
                 try {
                     if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
@@ -118,7 +109,6 @@ public final class LoxoneHarmonyIntegration {
             @Override
             protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                 ParserUtils.assertAtStartTag(parser);
-                int parserDepth = parser.getDepth();
                 Stanza stanza = null;
                 try {
                     if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
@@ -128,7 +118,6 @@ public final class LoxoneHarmonyIntegration {
                         stanza = PacketParserUtils.parseStanza(parser);
                     }
                 } catch (Exception e) {
-                    CharSequence content = PacketParserUtils.parseContentDepth(parser, parserDepth);
                     System.err.println(e.getMessage());
                 }
                 ParserUtils.assertAtEndTag(parser);
@@ -152,57 +141,46 @@ public final class LoxoneHarmonyIntegration {
         mainConnection.login(oaIdentity.asString() + "@connect.logitech.com/gatorade", oaIdentity.asString(), Resourcepart.from("main"));
         mainConnection.setFromMode(XMPPConnection.FromMode.USER);
 
-        mainConnection.addSyncStanzaListener(new StanzaListener() {
-            @Override
-            public void processStanza(Stanza stanza) throws SmackException.NotConnectedException {
-                System.out.println("On");
+        mainConnection.addSyncStanzaListener(stanza1 -> System.out.println("On"), stanza12 -> {
+            ExtensionElement event = stanza12.getExtension("event", "connect.logitech.com");
+            if (event == null) {
+                return false;
             }
-        }, new StanzaFilter() {
-            @Override
-            public boolean accept(Stanza stanza) {
-                ExtensionElement event = stanza.getExtension("event", "connect.logitech.com");
-                if (event == null) {
-                    return false;
-                }
-                final String type = ((StandardExtensionElement) event).getAttributeValue("type");
-                if (!"connect.stateDigest?notify".equals(type)) {
-                    return false;
-                }
+            final String type = ((StandardExtensionElement) event).getAttributeValue("type");
+            if (!"connect.stateDigest?notify".equals(type)) {
+                return false;
+            }
 
-                final String text = ((StandardExtensionElement) event).getText();
-                final JsonNode jsonNode;
-                try {
-                    jsonNode = new JdomParser().parse(text);
-                } catch (InvalidSyntaxException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            final String text = ((StandardExtensionElement) event).getText();
+            final JsonNode jsonNode;
+            try {
+                jsonNode = new JdomParser().parse(text);
+            } catch (InvalidSyntaxException e) {
+                e.printStackTrace();
+                return false;
+            }
 
-                return
-                        jsonNode.isNumberValue("activityStatus") && "1".equals(jsonNode.getNumberValue("activityStatus"))
+            return
+                    jsonNode.isNumberValue("activityStatus") && "1".equals(jsonNode.getNumberValue("activityStatus"))
 //                        && jsonNode.isNumberValue("activityId") && "23648476".equals("activityId"); // fire tv
-                                && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
-            }
+                            && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
         });
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
-                    }) {
-                        @Override
-                        protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
-                            final String mimeType = "vnd.logitech.connect/vnd.logitech.ping";
-                            xml.attribute("mime", mimeType);
-                            xml.rightAngleBracket();
-                            return xml;
-                        }
-                    });
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+        scheduledExecutorService.scheduleAtFixedRate(() -> {
+            try {
+                mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
+                }) {
+                    @Override
+                    protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+                        final String mimeType = "vnd.logitech.connect/vnd.logitech.ping";
+                        xml.attribute("mime", mimeType);
+                        xml.rightAngleBracket();
+                        return xml;
+                    }
+                });
+            } catch (SmackException.NotConnectedException | InterruptedException e) {
+                e.printStackTrace();
             }
         }, 30, 30, SECONDS);
 
@@ -210,33 +188,6 @@ public final class LoxoneHarmonyIntegration {
         Thread.sleep(100000);
         scheduledExecutorService.shutdown();
         mainConnection.disconnect();
-    }
-
-    private static String extractResponseBody(String harmonyHubEvent) throws OaIdentity.OaIdentityParseException {
-        Optional<String> result = Optional.empty();
-        final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        try {
-            final XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(new StringReader(harmonyHubEvent));
-            try {
-                while (xmlStreamReader.hasNext()) {
-                    final int elementType = xmlStreamReader.next();
-
-                    if (
-                            XMLEvent.START_ELEMENT == elementType
-                                    && "event".equals(xmlStreamReader.getLocalName())
-                                    && "connect.stateDigest?notify".equals(xmlStreamReader.getAttributeValue(null, "type"))
-                            ) {
-                        final String elementText = xmlStreamReader.getElementText();
-                        result = Optional.of(elementText);
-                    }
-                }
-            } finally {
-                xmlStreamReader.close();
-            }
-        } catch (XMLStreamException e) {
-            throw new OaIdentity.OaIdentityParseException("Harmony Hub response is not valid XML", e);
-        }
-        return result.orElseThrow(() -> new OaIdentity.OaIdentityParseException("Harmony Hub response has no content"));
     }
 
 }
