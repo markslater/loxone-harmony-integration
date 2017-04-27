@@ -204,7 +204,7 @@ public final class LoxoneHarmonyIntegration {
 
             return
                     jsonNode.isNumberValue("activityStatus") && "1".equals(jsonNode.getNumberValue("activityStatus"))
-                            && jsonNode.isNumberValue("activityId") && "23648476".equals(jsonNode.getStringValue("activityId")); // fire tv
+                            && jsonNode.isStringValue("activityId") && "23648476".equals(jsonNode.getStringValue("activityId")); // fire tv
 //                            && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
         });
 
@@ -227,7 +227,7 @@ public final class LoxoneHarmonyIntegration {
         }, 30, 30, SECONDS);
 
 
-        Thread.sleep(100000);
+        Thread.sleep(1000 * 60 * 90);
         scheduledExecutorService.shutdown();
         mainConnection.disconnect();
     }
