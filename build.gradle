@@ -31,6 +31,7 @@ task wrapper(type: Wrapper) {
 
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '21.0'
+    compile group: 'net.sourceforge.argo', name: 'argo', version: '4.4'
 
     compile group: 'org.igniterealtime.smack', name: 'smack-core', version: '4.2.0'
     compile group: 'org.igniterealtime.smack', name: 'smack-java7', version: '4.2.0'
