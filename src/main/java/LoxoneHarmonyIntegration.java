@@ -1,6 +1,16 @@
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
+import net.sourceforge.urin.Fragment;
+import net.sourceforge.urin.Path;
+import net.sourceforge.urin.Urin;
+import net.sourceforge.urin.scheme.http.HttpQuery;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
 import org.jivesoftware.smack.XMPPConnection;
@@ -15,16 +25,24 @@ import org.jxmpp.jid.impl.JidCreate;
 import org.jxmpp.jid.parts.Resourcepart;
 import org.xmlpull.v1.XmlPullParser;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.sourceforge.urin.Authority.authority;
+import static net.sourceforge.urin.Host.ipV4Address;
+import static net.sourceforge.urin.UserInfo.userInfo;
+import static net.sourceforge.urin.scheme.http.Http.HTTP;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
 public final class LoxoneHarmonyIntegration {
 
+    private static final Urin<String, HttpQuery, Fragment<String>> DIM_LIGHTS_URIN = HTTP.urin(authority(userInfo("HarmonyIntegration:y+pH#wR2B7pR"), ipV4Address(192, 168, 0, 15)), Path.path("dev", "sps", "io", "Watch TV", "pulse"));
+
     public static void main(String[] args) throws Exception {
+
         ProviderManager.addIQProvider(Bind.ELEMENT, Bind.NAMESPACE, new IQProvider<Bind>() {
             @Override
             public Bind parse(XmlPullParser xmlPullParser, int initialDepth) throws Exception {
@@ -141,7 +159,31 @@ public final class LoxoneHarmonyIntegration {
         mainConnection.login(oaIdentity.asString() + "@connect.logitech.com/gatorade", oaIdentity.asString(), Resourcepart.from("main"));
         mainConnection.setFromMode(XMPPConnection.FromMode.USER);
 
-        mainConnection.addSyncStanzaListener(stanza1 -> System.out.println("On"), stanza12 -> {
+        mainConnection.addSyncStanzaListener(stanza1 -> {
+
+            try {
+                try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+                    HttpGet httpget = new HttpGet(DIM_LIGHTS_URIN.asString());
+                    System.out.println("Executing request " + httpget.getRequestLine());
+
+                    // Create a custom response handler
+                    String responseBody = httpclient.execute(httpget, response -> {
+                        int status = response.getStatusLine().getStatusCode();
+                        if (status >= 200 && status < 300) {
+                            HttpEntity entity = response.getEntity();
+                            return entity != null ? EntityUtils.toString(entity) : null;
+                        } else {
+                            throw new ClientProtocolException("Unexpected response status: " + status);
+                        }
+                    });
+                    System.out.println("----------------------------------------");
+                    System.out.println(responseBody);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("On");
+        }, stanza12 -> {
             ExtensionElement event = stanza12.getExtension("event", "connect.logitech.com");
             if (event == null) {
                 return false;
@@ -162,8 +204,8 @@ public final class LoxoneHarmonyIntegration {
 
             return
                     jsonNode.isNumberValue("activityStatus") && "1".equals(jsonNode.getNumberValue("activityStatus"))
-//                        && jsonNode.isNumberValue("activityId") && "23648476".equals("activityId"); // fire tv
-                            && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
+                            && jsonNode.isNumberValue("activityId") && "23648476".equals(jsonNode.getStringValue("activityId")); // fire tv
+//                            && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
         });
 
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
