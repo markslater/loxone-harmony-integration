@@ -1,6 +1,7 @@
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
+import com.google.common.base.Joiner;
 import net.sourceforge.urin.Fragment;
 import net.sourceforge.urin.Path;
 import net.sourceforge.urin.Urin;
@@ -41,6 +42,7 @@ import static org.xmlpull.v1.XmlPullParser.END_TAG;
 public final class LoxoneHarmonyIntegration {
 
     private static final Urin<String, HttpQuery, Fragment<String>> DIM_LIGHTS_URIN = HTTP.urin(authority(userInfo("HarmonyIntegration:y+pH#wR2B7pR"), ipV4Address(192, 168, 0, 15)), Path.path("dev", "sps", "io", "Watch TV", "pulse"));
+    private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "4");
 
     public static void main(String[] args) throws Exception {
 
@@ -63,9 +65,9 @@ public final class LoxoneHarmonyIntegration {
         });
 
         final XMPPTCPConnectionConfiguration xmpptcpConnectionConfiguration = XMPPTCPConnectionConfiguration.builder()
-                .setHost("192.168.0.4")
+                .setHost(HARMONY_HUB)
                 .setPort(5222)
-                .setXmppDomain("192.168.0.4")
+                .setXmppDomain(HARMONY_HUB)
                 .build();
         final XMPPTCPConnection authConnection = new XMPPTCPConnection(xmpptcpConnectionConfiguration) {
             @Override
