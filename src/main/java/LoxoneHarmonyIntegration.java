@@ -30,6 +30,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static net.sourceforge.urin.Authority.authority;
 import static net.sourceforge.urin.Host.ipV4Address;
@@ -48,12 +49,13 @@ public final class LoxoneHarmonyIntegration {
             public Bind parse(XmlPullParser xmlPullParser, int initialDepth) throws Exception {
                 Bind bind = null;
                 do {
-                    switch (xmlPullParser.getName()) {
-                        case "resource":
-                            bind = Bind.newSet(Resourcepart.from(xmlPullParser.nextText()));
-                            break;
-                        case "jid":
-                            bind = Bind.newResult(JidCreate.entityFullFrom("client@" + xmlPullParser.nextText()));
+                    String name = xmlPullParser.getName();
+                    if (name.equals("resource")) {
+                        bind = Bind.newSet(Resourcepart.from(xmlPullParser.nextText()));
+
+                    } else if (name.equals("jid")) {
+                        bind = Bind.newResult(JidCreate.entityFullFrom("client@" + xmlPullParser.nextText()));
+
                     }
                 } while (xmlPullParser.next() != END_TAG && xmlPullParser.getDepth() != initialDepth);
                 return bind;
@@ -108,7 +110,7 @@ public final class LoxoneHarmonyIntegration {
                 final String mimeType = "vnd.logitech.connect/vnd.logitech.pair";
                 xml.attribute("mime", mimeType);
                 xml.rightAngleBracket();
-                xml.append("method=pair:name=").append(java.util.Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes())).append("#iOS6.0.1#iPhone");
+                xml.append("method=pair:name=").append(java.util.Base64.getEncoder().encodeToString(UUID.randomUUID().toString().getBytes(UTF_8))).append("#iOS6.0.1#iPhone");
                 return xml;
             }
         };
