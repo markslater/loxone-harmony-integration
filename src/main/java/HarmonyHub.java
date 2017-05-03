@@ -1,0 +1,2 @@
+interface HarmonyHub extends AutoCloseable {
+}
