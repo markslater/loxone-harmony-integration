@@ -38,13 +38,11 @@ public final class LoxoneHarmonyIntegration {
                             throw new ClientProtocolException("Unexpected response status: " + status);
                         }
                     });
-                    System.out.println("----------------------------------------");
                     System.out.println(responseBody);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("On");
         })).start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
