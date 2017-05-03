@@ -3,16 +3,6 @@ import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
 import com.google.common.base.Joiner;
 import net.sourceforge.sorb.Service;
-import net.sourceforge.urin.Fragment;
-import net.sourceforge.urin.Path;
-import net.sourceforge.urin.Urin;
-import net.sourceforge.urin.scheme.http.HttpQuery;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
 import org.jivesoftware.smack.XMPPConnection;
@@ -35,16 +25,17 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static net.sourceforge.urin.Authority.authority;
-import static net.sourceforge.urin.Host.ipV4Address;
-import static net.sourceforge.urin.UserInfo.userInfo;
-import static net.sourceforge.urin.scheme.http.Http.HTTP;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
-public final class SmackHarmonyHub implements Service<HarmonyHub> {
+final class SmackHarmonyHub implements Service<HarmonyHub> {
 
-    private static final Urin<String, HttpQuery, Fragment<String>> DIM_LIGHTS_URIN = HTTP.urin(authority(userInfo("HarmonyIntegration:y+pH#wR2B7pR"), ipV4Address(192, 168, 0, 15)), Path.path("dev", "sps", "io", "Watch TV", "pulse"));
     private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "4");
+
+    private final ActivityStartListener activityStartListener;
+
+    SmackHarmonyHub(ActivityStartListener activityStartListener) {
+        this.activityStartListener = activityStartListener;
+    }
 
     @Override
     public HarmonyHub start() {
@@ -166,31 +157,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             mainConnection.login(oaIdentity.asString() + "@connect.logitech.com/gatorade", oaIdentity.asString(), Resourcepart.from("main"));
             mainConnection.setFromMode(XMPPConnection.FromMode.USER);
 
-            mainConnection.addSyncStanzaListener(stanza1 -> {
-
-                try {
-                    try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-                        HttpGet httpget = new HttpGet(DIM_LIGHTS_URIN.asString());
-                        System.out.println("Executing request " + httpget.getRequestLine());
-
-                        // Create a custom response handler
-                        String responseBody = httpclient.execute(httpget, response -> {
-                            int status = response.getStatusLine().getStatusCode();
-                            if (status >= 200 && status < 300) {
-                                HttpEntity entity = response.getEntity();
-                                return entity != null ? EntityUtils.toString(entity) : null;
-                            } else {
-                                throw new ClientProtocolException("Unexpected response status: " + status);
-                            }
-                        });
-                        System.out.println("----------------------------------------");
-                        System.out.println(responseBody);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("On");
-            }, stanza12 -> {
+            mainConnection.addSyncStanzaListener(ignored -> activityStartListener.activityStartTriggered(), stanza12 -> {
                 ExtensionElement event = stanza12.getExtension("event", "connect.logitech.com");
                 if (event == null) {
                     return false;
@@ -240,5 +207,10 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
         } catch (SmackException | IOException | XMPPException | OaIdentity.OaIdentityParseException | InterruptedException e) {
             throw new RuntimeException("Failed to start Smack Harmony client", e);
         }
+    }
+
+    @FunctionalInterface
+    interface ActivityStartListener {
+        void activityStartTriggered();
     }
 }
