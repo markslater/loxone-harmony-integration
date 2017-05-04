@@ -13,7 +13,7 @@ public final class LoxoneHarmonyIntegration {
                             try {
                                 loxone.dimLights();
                             } catch (LoxoneCommandFailureException e) {
-                                e.printStackTrace();
+                                outputError(e);
                             }
                         }))
                         .start();
@@ -22,9 +22,13 @@ public final class LoxoneHarmonyIntegration {
             try {
                 mainService.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                outputError(e);
             }
         }));
+    }
+
+    private static void outputError(Exception e) {
+        e.printStackTrace(System.err);
     }
 
 }
