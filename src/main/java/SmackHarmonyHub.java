@@ -200,9 +200,17 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
                 }
             }, 30, 30, SECONDS);
 
-            return () -> {
-                scheduledExecutorService.shutdown();
-                mainConnection.disconnect();
+            return new HarmonyHub() {
+                @Override
+                public void sendAllOff() {
+                    // foo
+                }
+
+                @Override
+                public void close() throws Exception {
+                    scheduledExecutorService.shutdown();
+                    mainConnection.disconnect();
+                }
             };
         } catch (SmackException | IOException | XMPPException | OaIdentity.OaIdentityParseException | InterruptedException e) {
             throw new RuntimeException("Failed to start Smack Harmony client", e);
