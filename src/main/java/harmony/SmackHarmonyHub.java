@@ -4,6 +4,7 @@ import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
 import com.google.common.base.Joiner;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.sourceforge.sorb.Service;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
@@ -22,10 +23,10 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
@@ -184,7 +185,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
 //                                && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
             });
 
-            ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Harmony ping/keepalive thread %d").build());
             scheduledExecutorService.scheduleAtFixedRate(() -> {
                 try {
                     mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
