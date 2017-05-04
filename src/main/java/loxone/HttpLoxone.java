@@ -34,12 +34,12 @@ public final class HttpLoxone implements Service<Loxone> {
                         try {
                             response = EntityUtils.toString(closeableHttpResponse.getEntity());
                         } catch (IOException e) {
-                            throw new LoxoneCommandFailureException("couldn't even get the response from the stupid Loxone");
+                            throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and then failed to get response body", e);
                         }
-                        throw new LoxoneCommandFailureException(response);
+                        throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and response: " + response);
                     }
                 } catch (IOException e) {
-                    throw new LoxoneCommandFailureException("Failed to dim lights", e);
+                    throw new LoxoneCommandFailureException("Failed to execute HTTP request to dim lights", e);
                 }
             }
 
