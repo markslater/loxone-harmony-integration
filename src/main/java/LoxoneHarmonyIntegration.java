@@ -2,6 +2,9 @@ import harmony.SmackHarmonyHub;
 import loxone.HttpLoxone;
 import loxone.LoxoneCommandFailureException;
 
+import java.time.ZonedDateTime;
+
+import static java.time.ZoneOffset.UTC;
 import static net.sourceforge.sorb.Sorb.sorb;
 
 public final class LoxoneHarmonyIntegration {
@@ -28,6 +31,7 @@ public final class LoxoneHarmonyIntegration {
     }
 
     private static void outputError(Exception e) {
+        System.err.print(ZonedDateTime.now(UTC) + " - ");
         e.printStackTrace(System.err);
     }
 
