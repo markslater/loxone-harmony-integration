@@ -70,16 +70,12 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 @Override
                 protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
-                    Stanza stanza = null;
-                    try {
-                        if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
-                            // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
-                            stanza = new EmptyResultIQ();
-                        } else {
-                            stanza = PacketParserUtils.parseStanza(parser);
-                        }
-                    } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                    Stanza stanza;
+                    if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
+                        // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
+                        stanza = new EmptyResultIQ();
+                    } else {
+                        stanza = PacketParserUtils.parseStanza(parser);
                     }
                     ParserUtils.assertAtEndTag(parser);
                     if (stanza != null) {
@@ -128,16 +124,12 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 @Override
                 protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
-                    Stanza stanza = null;
-                    try {
-                        if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
-                            // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
-                            stanza = new EmptyResultIQ();
-                        } else {
-                            stanza = PacketParserUtils.parseStanza(parser);
-                        }
-                    } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                    Stanza stanza;
+                    if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
+                        // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
+                        stanza = new EmptyResultIQ();
+                    } else {
+                        stanza = PacketParserUtils.parseStanza(parser);
                     }
                     ParserUtils.assertAtEndTag(parser);
                     if (stanza != null) {
