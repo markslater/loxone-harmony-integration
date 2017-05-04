@@ -1,3 +1,5 @@
+package harmony;
+
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
@@ -27,13 +29,13 @@ import static com.google.common.base.Charsets.UTF_8;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
-final class SmackHarmonyHub implements Service<HarmonyHub> {
+public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
     private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "4");
 
     private final ActivityStartListener activityStartListener;
 
-    SmackHarmonyHub(ActivityStartListener activityStartListener) {
+    public SmackHarmonyHub(ActivityStartListener activityStartListener) {
         this.activityStartListener = activityStartListener;
     }
 
@@ -210,7 +212,7 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
     }
 
     @FunctionalInterface
-    interface ActivityStartListener {
+    public interface ActivityStartListener {
         void activityStartTriggered();
     }
 }
