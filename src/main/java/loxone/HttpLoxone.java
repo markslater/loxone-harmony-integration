@@ -33,7 +33,7 @@ public final class HttpLoxone implements Service<Loxone> {
                         final String response;
                         try {
                             response = EntityUtils.toString(closeableHttpResponse.getEntity());
-                        } catch (IOException e) {
+                        } catch (IOException | RuntimeException e) {
                             throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and then failed to get response body", e);
                         }
                         throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and response: " + response);
