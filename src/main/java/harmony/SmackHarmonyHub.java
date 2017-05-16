@@ -35,9 +35,11 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
     private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "4");
 
     private final ActivityStartListener activityStartListener;
+    private final PingFailureExceptionListener pingFailureExceptionListener;
 
-    public SmackHarmonyHub(ActivityStartListener activityStartListener) {
+    public SmackHarmonyHub(ActivityStartListener activityStartListener, PingFailureExceptionListener pingFailureExceptionListener) {
         this.activityStartListener = activityStartListener;
+        this.pingFailureExceptionListener = pingFailureExceptionListener;
     }
 
     @Override
@@ -168,6 +170,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                     jsonNode = new JdomParser().parse(text);
                 } catch (InvalidSyntaxException e) {
                     e.printStackTrace();
+                    // TODO restart me??
                     return false;
                 }
 
@@ -190,8 +193,12 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                             return xml;
                         }
                     });
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
+                } catch (SmackException.NotConnectedException e) {
+                    pingFailureExceptionListener.pingFailed(e);
+                    // TODO restart me
+                } catch (InterruptedException e) {
                     e.printStackTrace();
+                    // TODO what do we do when this crap happens??
                 }
             }, 30, 30, SECONDS);
 
@@ -201,11 +208,17 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             };
         } catch (SmackException | IOException | XMPPException | OaIdentity.OaIdentityParseException | InterruptedException e) {
             throw new RuntimeException("Failed to start Smack Harmony client", e);
+            // TODO audit and restart me ??
         }
     }
 
     @FunctionalInterface
     public interface ActivityStartListener {
         void activityStartTriggered();
+    }
+
+    @FunctionalInterface
+    public interface PingFailureExceptionListener {
+        void pingFailed(SmackException.NotConnectedException e);
     }
 }

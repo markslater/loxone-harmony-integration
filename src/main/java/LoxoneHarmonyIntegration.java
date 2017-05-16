@@ -18,7 +18,7 @@ public final class LoxoneHarmonyIntegration {
                             } catch (LoxoneCommandFailureException e) {
                                 outputError(e);
                             }
-                        }))
+                        }, LoxoneHarmonyIntegration::outputError)) // TODO restart
                         .start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
