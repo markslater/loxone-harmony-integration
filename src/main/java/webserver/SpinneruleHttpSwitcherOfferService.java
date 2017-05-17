@@ -9,8 +9,8 @@ import java.io.IOException;
 public final class SpinneruleHttpSwitcherOfferService implements Service<HttpSwitcherOffer> {
     private final SpinneruleService spinneruleService;
 
-    public SpinneruleHttpSwitcherOfferService(HarmonyHub harmonyHub) throws IOException {
-        spinneruleService = new SpinneruleService(Context.context("/allOff", request -> {
+    public SpinneruleHttpSwitcherOfferService(HarmonyHub harmonyHub, int port) throws IOException {
+        spinneruleService = new SpinneruleService(port, Context.context("/allOff", request -> {
             harmonyHub.sendAllOff();
             return Response.ok(BodiedContent.text("Switched off"));
         }));
@@ -19,7 +19,6 @@ public final class SpinneruleHttpSwitcherOfferService implements Service<HttpSwi
     @Override
     public HttpSwitcherOffer start() {
         final Spinnerule spinnerule = spinneruleService.start();
-        System.out.println("spinnerule.port() = " + spinnerule.port());
         return spinnerule::close;
     }
 }

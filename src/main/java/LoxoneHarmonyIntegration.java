@@ -23,7 +23,7 @@ public final class LoxoneHarmonyIntegration {
                         }, LoxoneHarmonyIntegration::outputError)) // TODO restart
                         .then(harmonyHub -> {
                             try {
-                                return new SpinneruleHttpSwitcherOfferService(harmonyHub);
+                                return new SpinneruleHttpSwitcherOfferService(harmonyHub, 6789);
                             } catch (IOException e) {
                                 throw new RuntimeException(e); // TODO Eurgh
                             }
