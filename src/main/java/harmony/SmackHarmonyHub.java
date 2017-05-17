@@ -1,7 +1,10 @@
+package harmony;
+
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
 import com.google.common.base.Joiner;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.sourceforge.sorb.Service;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaCollector;
@@ -20,21 +23,23 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.util.UUID;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
-final class SmackHarmonyHub implements Service<HarmonyHub> {
+public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
     private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "4");
 
     private final ActivityStartListener activityStartListener;
+    private final PingFailureExceptionListener pingFailureExceptionListener;
 
-    SmackHarmonyHub(ActivityStartListener activityStartListener) {
+    public SmackHarmonyHub(ActivityStartListener activityStartListener, PingFailureExceptionListener pingFailureExceptionListener) {
         this.activityStartListener = activityStartListener;
+        this.pingFailureExceptionListener = pingFailureExceptionListener;
     }
 
     @Override
@@ -67,16 +72,12 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
                 @Override
                 protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
-                    Stanza stanza = null;
-                    try {
-                        if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
-                            // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
-                            stanza = new EmptyResultIQ();
-                        } else {
-                            stanza = PacketParserUtils.parseStanza(parser);
-                        }
-                    } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                    Stanza stanza;
+                    if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
+                        // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
+                        stanza = new EmptyResultIQ();
+                    } else {
+                        stanza = PacketParserUtils.parseStanza(parser);
                     }
                     ParserUtils.assertAtEndTag(parser);
                     if (stanza != null) {
@@ -125,16 +126,12 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
                 @Override
                 protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
-                    Stanza stanza = null;
-                    try {
-                        if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
-                            // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
-                            stanza = new EmptyResultIQ();
-                        } else {
-                            stanza = PacketParserUtils.parseStanza(parser);
-                        }
-                    } catch (Exception e) {
-                        System.err.println(e.getMessage());
+                    Stanza stanza;
+                    if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
+                        // Acknowledgement IQs don't contain a type so an empty result is created here to prevent a parsing NPE
+                        stanza = new EmptyResultIQ();
+                    } else {
+                        stanza = PacketParserUtils.parseStanza(parser);
                     }
                     ParserUtils.assertAtEndTag(parser);
                     if (stanza != null) {
@@ -173,6 +170,7 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
                     jsonNode = new JdomParser().parse(text);
                 } catch (InvalidSyntaxException e) {
                     e.printStackTrace();
+                    // TODO restart me??
                     return false;
                 }
 
@@ -182,7 +180,7 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
 //                                && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
             });
 
-            ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+            ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Harmony ping/keepalive thread %d").build());
             scheduledExecutorService.scheduleAtFixedRate(() -> {
                 try {
                     mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
@@ -195,8 +193,12 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
                             return xml;
                         }
                     });
-                } catch (SmackException.NotConnectedException | InterruptedException e) {
+                } catch (SmackException.NotConnectedException e) {
+                    pingFailureExceptionListener.pingFailed(e);
+                    // TODO restart me
+                } catch (InterruptedException e) {
                     e.printStackTrace();
+                    // TODO what do we do when this crap happens??
                 }
             }, 30, 30, SECONDS);
 
@@ -214,11 +216,17 @@ final class SmackHarmonyHub implements Service<HarmonyHub> {
             };
         } catch (SmackException | IOException | XMPPException | OaIdentity.OaIdentityParseException | InterruptedException e) {
             throw new RuntimeException("Failed to start Smack Harmony client", e);
+            // TODO audit and restart me ??
         }
     }
 
     @FunctionalInterface
-    interface ActivityStartListener {
+    public interface ActivityStartListener {
         void activityStartTriggered();
+    }
+
+    @FunctionalInterface
+    public interface PingFailureExceptionListener {
+        void pingFailed(SmackException.NotConnectedException e);
     }
 }

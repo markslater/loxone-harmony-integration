@@ -1,3 +1,5 @@
+package loxone;
+
 import net.sourceforge.sorb.Service;
 import net.sourceforge.urin.Fragment;
 import net.sourceforge.urin.Path;
@@ -24,17 +26,20 @@ public final class HttpLoxone implements Service<Loxone> {
         final CloseableHttpClient closeableHttpClient = HttpClients.createDefault();
         return new Loxone() {
             @Override
-            public void dimLights() {
-                HttpGet httpget = new HttpGet(DIM_LIGHTS_URIN.asString());
-                System.out.println("Executing request " + httpget.getRequestLine());
-
-                try (final CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(httpget)) {
+            public void dimLights() throws LoxoneCommandFailureException {
+                try (final CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(new HttpGet(DIM_LIGHTS_URIN.asString()))) {
                     final int statusCode = closeableHttpResponse.getStatusLine().getStatusCode();
                     if (statusCode != 200) {
-                        System.err.println(EntityUtils.toString(closeableHttpResponse.getEntity()));
+                        final String response;
+                        try {
+                            response = EntityUtils.toString(closeableHttpResponse.getEntity());
+                        } catch (IOException | RuntimeException e) {
+                            throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and then failed to get response body", e);
+                        }
+                        throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and response: " + response);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to dim lights", e);
+                    throw new LoxoneCommandFailureException("Failed to execute HTTP request to dim lights", e);
                 }
             }
 

@@ -1,3 +1,5 @@
+package harmony;
+
 import com.google.common.base.Splitter;
 
 import javax.xml.stream.XMLInputFactory;
