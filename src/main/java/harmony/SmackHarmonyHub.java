@@ -205,7 +205,23 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             return new HarmonyHub() {
                 @Override
                 public void sendAllOff() {
-                    // foo
+                    System.out.println("All off!");
+                    try {
+                        mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
+                        }) {
+                            @Override
+                            protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+                                final String mimeType = "vnd.logitech.harmony/vnd.logitech.harmony.engine?startactivity";
+                                xml.attribute("mime", mimeType);
+                                xml.rightAngleBracket();
+                                xml.append("activityId=-1:timestamp=10");
+                                return xml;
+                            }
+                        });
+                    } catch (SmackException.NotConnectedException | InterruptedException e) {
+                        e.printStackTrace();
+                        // TODO What do we do when this crap happens?
+                    }
                 }
 
                 @Override
