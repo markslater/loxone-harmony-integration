@@ -3,6 +3,7 @@ import loxone.HttpLoxone;
 import loxone.LoxoneCommandFailureException;
 import webserver.SpinneruleHttpSwitcherOfferService;
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 
 import static java.time.ZoneOffset.UTC;
@@ -20,7 +21,13 @@ public final class LoxoneHarmonyIntegration {
                                 outputError(e);
                             }
                         }, LoxoneHarmonyIntegration::outputError)) // TODO restart
-                        .then(SpinneruleHttpSwitcherOfferService::new)
+                        .then(harmonyHub -> {
+                            try {
+                                return new SpinneruleHttpSwitcherOfferService(harmonyHub);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e); // TODO Eurgh
+                            }
+                        })
                         .start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
