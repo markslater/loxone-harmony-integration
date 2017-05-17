@@ -208,7 +208,6 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             return new HarmonyHub() {
                 @Override
                 public void sendAllOff() {
-                    System.out.println("All off!");
                     try {
                         mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
                         }) {
