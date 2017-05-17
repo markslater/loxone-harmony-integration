@@ -4,6 +4,7 @@ import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.saj.InvalidSyntaxException;
 import com.google.common.base.Joiner;
+import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import net.sourceforge.sorb.Service;
 import org.jivesoftware.smack.SmackException;
@@ -27,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import static com.google.common.base.Charsets.UTF_8;
 import static java.util.concurrent.Executors.newSingleThreadScheduledExecutor;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
@@ -36,6 +38,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
     private final ActivityStartListener activityStartListener;
     private final PingFailureExceptionListener pingFailureExceptionListener;
+    private final Stopwatch stopwatch = Stopwatch.createStarted();
 
     public SmackHarmonyHub(ActivityStartListener activityStartListener, PingFailureExceptionListener pingFailureExceptionListener) {
         this.activityStartListener = activityStartListener;
@@ -214,7 +217,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                                 final String mimeType = "vnd.logitech.harmony/vnd.logitech.harmony.engine?startactivity";
                                 xml.attribute("mime", mimeType);
                                 xml.rightAngleBracket();
-                                xml.append("activityId=-1:timestamp=10");
+                                xml.append("activityId=-1:timestamp=").append(String.valueOf(stopwatch.elapsed(MILLISECONDS)));
                                 return xml;
                             }
                         });
