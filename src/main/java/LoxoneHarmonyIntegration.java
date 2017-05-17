@@ -1,6 +1,7 @@
 import harmony.SmackHarmonyHub;
 import loxone.HttpLoxone;
 import loxone.LoxoneCommandFailureException;
+import webserver.SpinneruleHttpSwitcherOfferService;
 
 import java.time.ZonedDateTime;
 
@@ -19,6 +20,7 @@ public final class LoxoneHarmonyIntegration {
                                 outputError(e);
                             }
                         }, LoxoneHarmonyIntegration::outputError)) // TODO restart
+                        .then(SpinneruleHttpSwitcherOfferService::new)
                         .start();
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
