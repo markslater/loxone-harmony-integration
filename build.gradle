@@ -14,6 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+        classpath 'com.netflix.nebula:gradle-ospackage-plugin:4.5.1'
     }
 }
 
@@ -24,6 +25,7 @@ apply plugin: 'java'
 apply plugin: 'pmd'
 apply plugin: 'findbugs'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'nebula.deb'
 
 repositories {
     mavenCentral()
@@ -57,5 +59,19 @@ dependencies {
 jar {
     manifest {
         attributes 'Main-Class': 'LoxoneHarmonyIntegration'
+    }
+}
+
+task buildDeb(type: Deb) {
+    packageName = 'loxone-harmony-integration'
+    version = '1.2.3'
+    release = 1
+
+    requires('openjdk-8-jre')
+
+    into 'opt/loxone-harmony-integration'
+
+    from(shadowJar.outputs.files) {
+        into 'lib'
     }
 }
