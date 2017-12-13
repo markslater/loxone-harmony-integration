@@ -71,7 +71,5 @@ task buildDeb(type: Deb) {
 
     into 'opt/loxone-harmony-integration'
 
-    from(shadowJar.outputs.files) {
-        into 'lib'
-    }
+    from(shadowJar.outputs.files)
 }
