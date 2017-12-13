@@ -35,6 +35,8 @@ public final class SpinneruleHttpSwitcherOfferService implements Service<HttpSwi
         }, Context.context("/allOff", request -> {
             harmonyHub.sendAllOff();
             return Response.ok(BodiedContent.text("Switched off"));
+        }), Context.context("/", request -> {
+            return Response.notFound(EmptyContent.emptyContent());
         }));
     }
 
