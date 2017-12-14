@@ -69,14 +69,14 @@ task buildDeb(type: Deb) {
 
     requires('openjdk-8-jre')
 
-    postInstall file('deploy/postInstall.sh')
-    preUninstall file('deploy/preUninstall.sh')
+    postInstall file('deploy/lifecycle/postInstall.sh')
+    preUninstall file('deploy/lifecycle/preUninstall.sh')
 
     into 'opt/loxone-harmony-integration'
 
     from(shadowJar.outputs.files)
 
-    from('deploy/loxone-harmony/integration.service') {
+    from('deploy/loxone-harmony/distributed') {
         into('/etc/systemd/system')
     }
 }
