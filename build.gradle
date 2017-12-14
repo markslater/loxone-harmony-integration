@@ -76,7 +76,7 @@ task buildDeb(type: Deb) {
 
     from(shadowJar.outputs.files)
 
-    from('deploy/loxone-harmony/distributed') {
+    from('deploy/distributed') {
         into('/etc/systemd/system')
     }
 }
