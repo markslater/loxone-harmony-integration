@@ -34,7 +34,7 @@ import static org.xmlpull.v1.XmlPullParser.END_TAG;
 
 public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
-    private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "0", "3");
+    private static final String HARMONY_HUB = Joiner.on('.').join("192", "168", "86", "3");
 
     private final ActivityStartListener activityStartListener;
     private final PingFailureExceptionListener pingFailureExceptionListener;

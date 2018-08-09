@@ -19,7 +19,7 @@ import static net.sourceforge.urin.UserInfo.userInfo;
 import static net.sourceforge.urin.scheme.http.Http.HTTP;
 
 public final class HttpLoxone implements Service<Loxone> {
-    private static final Urin<String, HttpQuery, Fragment<String>> DIM_LIGHTS_URIN = HTTP.urin(authority(userInfo("HarmonyIntegration:y+pH#wR2B7pR"), ipV4Address(192, 168, 0, 15)), Path.path("dev", "sps", "io", "Watch TV", "pulse"));
+    private static final Urin<String, HttpQuery, Fragment<String>> DIM_LIGHTS_URIN = HTTP.urin(authority(userInfo("HarmonyIntegration:y+pH#wR2B7pR"), ipV4Address(192, 168, 86, 15)), Path.path("dev", "sps", "io", "Watch TV", "pulse"));
 
     @Override
     public Loxone start() {
