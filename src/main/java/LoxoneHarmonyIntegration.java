@@ -11,7 +11,7 @@ import static net.sourceforge.sorb.Sorb.sorb;
 
 public final class LoxoneHarmonyIntegration {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) {
         final AutoCloseable mainService =
                 sorb(new HttpLoxone())
                         .then(loxone -> new SmackHarmonyHub(() -> {
@@ -39,7 +39,7 @@ public final class LoxoneHarmonyIntegration {
         }));
     }
 
-    private static void outputError(Exception e) {
+    private static void outputError(final Exception e) {
         System.err.print(ZonedDateTime.now(UTC) + " - ");
         e.printStackTrace(System.err);
     }

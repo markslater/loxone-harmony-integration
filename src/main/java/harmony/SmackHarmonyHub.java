@@ -40,7 +40,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
     private final PingFailureExceptionListener pingFailureExceptionListener;
     private final Stopwatch stopwatch = Stopwatch.createStarted();
 
-    public SmackHarmonyHub(ActivityStartListener activityStartListener, PingFailureExceptionListener pingFailureExceptionListener) {
+    public SmackHarmonyHub(final ActivityStartListener activityStartListener, final PingFailureExceptionListener pingFailureExceptionListener) {
         this.activityStartListener = activityStartListener;
         this.pingFailureExceptionListener = pingFailureExceptionListener;
     }
@@ -50,14 +50,14 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
         try {
             ProviderManager.addIQProvider(Bind.ELEMENT, Bind.NAMESPACE, new IQProvider<Bind>() {
                 @Override
-                public Bind parse(XmlPullParser xmlPullParser, int initialDepth) throws Exception {
+                public Bind parse(final XmlPullParser xmlPullParser, final int initialDepth) throws Exception {
                     Bind bind = null;
                     do {
-                        String name = xmlPullParser.getName();
-                        if (name.equals("resource")) {
+                        final String name = xmlPullParser.getName();
+                        if ("resource".equals(name)) {
                             bind = Bind.newSet(Resourcepart.from(xmlPullParser.nextText()));
 
-                        } else if (name.equals("jid")) {
+                        } else if ("jid".equals(name)) {
                             bind = Bind.newResult(JidCreate.entityFullFrom("client@" + xmlPullParser.nextText()));
 
                         }
@@ -73,7 +73,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                     .build();
             final XMPPTCPConnection authConnection = new XMPPTCPConnection(xmpptcpConnectionConfiguration) {
                 @Override
-                protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
+                protected void parseAndProcessStanza(final XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
                     Stanza stanza;
                     if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
@@ -89,7 +89,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 }
 
                 @Override
-                public void sendStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
+                public void sendStanza(final Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
                     if (stanza.getError() == null || stanza.getError().getCondition() != XMPPError.Condition.service_unavailable) {
                         super.sendStanza(stanza);
                     }
@@ -106,7 +106,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             final Stanza iq = new IQ(new SimpleIQ("oa", "connect.logitech.com") {
             }) {
                 @Override
-                protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+                protected IQChildElementXmlStringBuilder getIQChildElementBuilder(final IQChildElementXmlStringBuilder xml) {
                     final String mimeType = "vnd.logitech.connect/vnd.logitech.pair";
                     xml.attribute("mime", mimeType);
                     xml.rightAngleBracket();
@@ -127,7 +127,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
             final XMPPTCPConnection mainConnection = new XMPPTCPConnection(xmpptcpConnectionConfiguration) {
                 @Override
-                protected void parseAndProcessStanza(XmlPullParser parser) throws Exception {
+                protected void parseAndProcessStanza(final XmlPullParser parser) throws Exception {
                     ParserUtils.assertAtStartTag(parser);
                     Stanza stanza;
                     if (IQ.IQ_ELEMENT.equals(parser.getName()) && parser.getAttributeValue("", "type") == null) {
@@ -143,7 +143,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 }
 
                 @Override
-                public void sendStanza(Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
+                public void sendStanza(final Stanza stanza) throws SmackException.NotConnectedException, InterruptedException {
                     if (stanza.getError() == null || stanza.getError().getCondition() != XMPPError.Condition.service_unavailable) {
                         super.sendStanza(stanza);
                     }
@@ -158,7 +158,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
             mainConnection.setFromMode(XMPPConnection.FromMode.USER);
 
             mainConnection.addSyncStanzaListener(ignored -> activityStartListener.activityStartTriggered(), stanza12 -> {
-                ExtensionElement event = stanza12.getExtension("event", "connect.logitech.com");
+                final ExtensionElement event = stanza12.getExtension("event", "connect.logitech.com");
                 if (event == null) {
                     return false;
                 }
@@ -182,13 +182,13 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                                 && jsonNode.isStringValue("activityId") && "42155155".equals(jsonNode.getStringValue("activityId")); // fire tv
             });
 
-            ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Harmony ping/keepalive thread %d").build());
+            final ScheduledExecutorService scheduledExecutorService = newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setNameFormat("Harmony ping/keepalive thread %d").build());
             scheduledExecutorService.scheduleAtFixedRate(() -> {
                 try {
                     mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
                     }) {
                         @Override
-                        protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+                        protected IQChildElementXmlStringBuilder getIQChildElementBuilder(final IQChildElementXmlStringBuilder xml) {
                             final String mimeType = "vnd.logitech.connect/vnd.logitech.ping";
                             xml.attribute("mime", mimeType);
                             xml.rightAngleBracket();
@@ -211,7 +211,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                         mainConnection.sendStanza(new IQ(new SimpleIQ("oa", "connect.logitech.com") {
                         }) {
                             @Override
-                            protected IQChildElementXmlStringBuilder getIQChildElementBuilder(IQChildElementXmlStringBuilder xml) {
+                            protected IQChildElementXmlStringBuilder getIQChildElementBuilder(final IQChildElementXmlStringBuilder xml) {
                                 final String mimeType = "vnd.logitech.harmony/vnd.logitech.harmony.engine?startactivity";
                                 xml.attribute("mime", mimeType);
                                 xml.rightAngleBracket();

@@ -27,7 +27,7 @@ public final class HttpLoxone implements Service<Loxone> {
         return new Loxone() {
             @Override
             public void dimLights() throws LoxoneCommandFailureException {
-                try (final CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(new HttpGet(DIM_LIGHTS_URIN.asString()))) {
+                try (CloseableHttpResponse closeableHttpResponse = closeableHttpClient.execute(new HttpGet(DIM_LIGHTS_URIN.asString()))) {
                     final int statusCode = closeableHttpResponse.getStatusLine().getStatusCode();
                     if (statusCode != 200) {
                         final String response;

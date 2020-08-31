@@ -1,11 +1,11 @@
 package loxone;
 
 public final class LoxoneCommandFailureException extends Exception {
-    LoxoneCommandFailureException(String message) {
+    LoxoneCommandFailureException(final String message) {
         super(message);
     }
 
-    LoxoneCommandFailureException(String message, Throwable cause) {
+    LoxoneCommandFailureException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

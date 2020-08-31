@@ -13,17 +13,17 @@ final class OaIdentity {
 
     private final String value;
 
-    private OaIdentity(String value) {
+    private OaIdentity(final String value) {
         this.value = value;
     }
 
-    static OaIdentity parseHarmonyHubResponse(String harmonyHubResponse) throws OaIdentityParseException {
+    static OaIdentity parseHarmonyHubResponse(final String harmonyHubResponse) throws OaIdentityParseException {
         final String responseBody = extractResponseBody(harmonyHubResponse);
         final String identity = extractIdentity(responseBody);
         return new OaIdentity(identity);
     }
 
-    private static String extractResponseBody(String harmonyHubResponse) throws OaIdentityParseException {
+    private static String extractResponseBody(final String harmonyHubResponse) throws OaIdentityParseException {
         Optional<String> result = Optional.empty();
         final XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         try {
@@ -46,10 +46,10 @@ final class OaIdentity {
         return result.orElseThrow(() -> new OaIdentityParseException("Harmony Hub response has no content"));
     }
 
-    private static String extractIdentity(String responseBody) throws OaIdentityParseException {
+    private static String extractIdentity(final String responseBody) throws OaIdentityParseException {
         Optional<String> result = Optional.empty();
         final Iterable<String> nameValuePairs = Splitter.on(':').split(responseBody);
-        for (String nameValuePair : nameValuePairs) {
+        for (final String nameValuePair : nameValuePairs) {
             final String prefix = "identity=";
             if (nameValuePair.startsWith(prefix)) {
                 result = Optional.of(nameValuePair.substring(prefix.length()));
@@ -63,11 +63,11 @@ final class OaIdentity {
     }
 
     static final class OaIdentityParseException extends Exception {
-        OaIdentityParseException(String message) {
+        OaIdentityParseException(final String message) {
             super(message);
         }
 
-        OaIdentityParseException(String message, Throwable cause) {
+        OaIdentityParseException(final String message, final Throwable cause) {
             super(message, cause);
         }
     }
