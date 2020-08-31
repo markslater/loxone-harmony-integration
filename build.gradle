@@ -20,19 +20,15 @@ buildscript {
 
 plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'com.github.spotbugs' version '4.2.1'
 }
 apply plugin: 'java'
 apply plugin: 'pmd'
-apply plugin: 'findbugs'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'nebula.deb'
 
 repositories {
     mavenCentral()
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4'
 }
 
 dependencies {
