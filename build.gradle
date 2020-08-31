@@ -27,18 +27,18 @@ repositories {
 }
 
 dependencies {
-    compile group: 'com.google.guava', name: 'guava', version: '29.0-jre'
-    compile group: 'net.sourceforge.argo', name: 'argo', version: '5.13'
-    compile group: 'net.sourceforge.urin', name: 'urin', version: '3.11'
-    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
-    compile group: 'net.sourceforge.sorb', name: 'sorb', version: '0.8'
-    compile group: 'net.sourceforge.spinnerule', name: 'spinnerule', version: '0.31'
+    implementation group: 'com.google.guava', name: 'guava', version: '29.0-jre'
+    implementation group: 'net.sourceforge.argo', name: 'argo', version: '5.13'
+    implementation group: 'net.sourceforge.urin', name: 'urin', version: '3.11'
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+    implementation group: 'net.sourceforge.sorb', name: 'sorb', version: '0.8'
+    implementation group: 'net.sourceforge.spinnerule', name: 'spinnerule', version: '0.31'
 
-    compile group: 'org.igniterealtime.smack', name: 'smack-core', version: '4.2.0'
-    compile group: 'org.igniterealtime.smack', name: 'smack-java7', version: '4.2.0'
-    compile group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.2.0'
-    compile group: 'org.igniterealtime.smack', name: 'smack-debug', version: '4.2.0'
-    runtime group: 'org.igniterealtime.smack', name: 'smack-sasl-javax', version: '4.2.0'
+    implementation group: 'org.igniterealtime.smack', name: 'smack-core', version: '4.2.0'
+    implementation group: 'org.igniterealtime.smack', name: 'smack-java7', version: '4.2.0'
+    implementation group: 'org.igniterealtime.smack', name: 'smack-tcp', version: '4.2.0'
+    implementation group: 'org.igniterealtime.smack', name: 'smack-debug', version: '4.2.0'
+    runtimeOnly group: 'org.igniterealtime.smack', name: 'smack-sasl-javax', version: '4.2.0'
 
     testImplementation group: 'org.hamcrest', name: 'hamcrest', version: '2.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version :'5.6.2'
