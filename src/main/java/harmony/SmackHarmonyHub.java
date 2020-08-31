@@ -226,7 +226,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 }
 
                 @Override
-                public void close() throws Exception {
+                public void close() {
                     scheduledExecutorService.shutdown();
                     mainConnection.disconnect();
                 }
