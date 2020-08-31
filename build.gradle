@@ -29,7 +29,7 @@ repositories {
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '21.0'
     compile group: 'net.sourceforge.argo', name: 'argo', version: '5.13'
-    compile group: 'net.sourceforge.urin', name: 'urin', version: '2.21'
+    compile group: 'net.sourceforge.urin', name: 'urin', version: '3.11'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
     compile group: 'net.sourceforge.sorb', name: 'sorb', version: '0.8'
     compile group: 'net.sourceforge.spinnerule', name: 'spinnerule', version: '0.28'
