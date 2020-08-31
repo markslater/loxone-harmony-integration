@@ -179,7 +179,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
 
                 return
                         jsonNode.isNumberValue("activityStatus") && "1".equals(jsonNode.getNumberValue("activityStatus"))
-                                && jsonNode.isStringValue("activityId") && "23648476".equals(jsonNode.getStringValue("activityId")); // fire tv
+                                && jsonNode.isStringValue("activityId") && "42155155".equals(jsonNode.getStringValue("activityId")); // fire tv
 //                                && jsonNode.isStringValue("activityId") && "23649686".equals(jsonNode.getStringValue("activityId")); // living room sonos
             });
 
