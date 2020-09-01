@@ -11,6 +11,9 @@ import static net.sourceforge.sorb.Sorb.sorb;
 
 public final class LoxoneHarmonyIntegration {
 
+    private LoxoneHarmonyIntegration() {
+    }
+
     public static void main(final String[] args) {
         final AutoCloseable mainService =
                 sorb(new HttpLoxone())

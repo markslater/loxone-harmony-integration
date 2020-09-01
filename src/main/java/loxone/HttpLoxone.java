@@ -5,6 +5,7 @@ import net.sourceforge.urin.Fragment;
 import net.sourceforge.urin.Path;
 import net.sourceforge.urin.Urin;
 import net.sourceforge.urin.scheme.http.HttpQuery;
+import org.apache.http.ParseException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -33,7 +34,7 @@ public final class HttpLoxone implements Service<Loxone> {
                         final String response;
                         try {
                             response = EntityUtils.toString(closeableHttpResponse.getEntity());
-                        } catch (IOException | RuntimeException e) {
+                        } catch (IOException | ParseException | IllegalArgumentException e) {
                             throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and then failed to get response body", e);
                         }
                         throw new LoxoneCommandFailureException("Expected HTTP response code 200, but got " + statusCode + ", and response: " + response);
