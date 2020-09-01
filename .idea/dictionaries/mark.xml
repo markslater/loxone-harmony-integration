@@ -7,6 +7,7 @@
       <w>errorcode</w>
       <w>errorprone</w>
       <w>errorstring</w>
+      <w>eurgh</w>
       <w>harmonyintegration</w>
       <w>httpcomponents</w>
       <w>igniterealtime</w>
@@ -14,6 +15,7 @@
       <w>johnrengelman</w>
       <w>keepalive</w>
       <w>loxone</w>
+      <w>miniserver</w>
       <w>ospackage</w>
       <w>ruleset</w>
       <w>sorb</w>
