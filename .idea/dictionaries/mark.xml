@@ -1,11 +1,17 @@
 <component name="ProjectDictionaryState">
   <dictionary name="mark">
     <words>
+      <w>bestpractices</w>
+      <w>codestyle</w>
+      <w>errorcode</w>
+      <w>errorprone</w>
+      <w>errorstring</w>
       <w>harmonyintegration</w>
       <w>jibber</w>
       <w>keepalive</w>
       <w>loxone</w>
       <w>startactivity</w>
+      <w>websocket</w>
       <w>xmlns</w>
     </words>
   </dictionary>
