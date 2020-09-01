@@ -20,95 +20,34 @@
     </description>
 
     <rule ref="category/java/bestpractices.xml">
-        <!--        <exclude name="AbstractClassWithoutAbstractMethod"/>-->
         <exclude name="AvoidPrintStackTrace"/>
-        <!--        <exclude name="AvoidReassigningLoopVariables"/> &lt;!&ndash; configured later &ndash;&gt;-->
-        <!--        <exclude name="ForLoopVariableCount"/> &lt;!&ndash; configured later &ndash;&gt;-->
         <exclude name="JUnitAssertionsShouldIncludeMessage"/>
         <exclude name="JUnitTestContainsTooManyAsserts"/>
-        <!--        <exclude name="JUnitTestsShouldIncludeAssert"/>-->
         <exclude name="SystemPrintln"/>
     </rule>
-    <!--    <rule ref="category/java/bestpractices.xml/AvoidReassigningLoopVariables">-->
-    <!--        <properties>-->
-    <!--            <property name="forReassign" value="allow"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
-    <!--    <rule ref="category/java/bestpractices.xml/ForLoopVariableCount">-->
-    <!--        <properties>-->
-    <!--            <property name="maximumVariables" value="2"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
 
     <rule ref="category/java/codestyle.xml">
         <exclude name="AtLeastOneConstructor"/>
-        <!--        <exclude name="CallSuperInConstructor"/>-->
-        <!--        <exclude name="ClassNamingConventions"/> &lt;!&ndash; configured later &ndash;&gt;-->
         <exclude name="CommentDefaultAccessModifier"/>
-        <!--        <exclude name="ControlStatementBraces"/> &lt;!&ndash; configured later &ndash;&gt;-->
-        <!--        <exclude name="ConfusingTernary"/>-->
         <exclude name="DefaultPackage"/>
-        <!--        <exclude name="GenericsNaming"/>-->
-        <!--        <exclude name="LinguisticNaming"/>-->
-        <!--        <exclude name="LocalVariableCouldBeFinal"/>-->
         <exclude name="LongVariable"/> <!-- configured later -->
-        <!--        <exclude name="OnlyOneReturn"/>-->
-        <!--        <exclude name="ShortClassName"/> &lt;!&ndash; configured later &ndash;&gt;-->
-        <!--        <exclude name="ShortMethodName"/> &lt;!&ndash; configured later &ndash;&gt;-->
         <exclude name="ShortVariable"/>
         <exclude name="TooManyStaticImports"/>
-        <!--        <exclude name="UnnecessaryConstructor"/>-->
     </rule>
     <rule ref="category/java/codestyle.xml/LongVariable">
         <properties>
             <property name="minimum" value="60"/>
         </properties>
     </rule>
-    <!--    <rule ref="category/java/codestyle.xml/ShortClassName">-->
-    <!--        <properties>-->
-    <!--            <property name="minimum" value="4"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
-    <!--    <rule ref="category/java/codestyle.xml/ShortMethodName">-->
-    <!--        <properties>-->
-    <!--            <property name="minimum" value="2"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
-    <!--    <rule ref="category/java/codestyle.xml/ControlStatementBraces">-->
-    <!--        <properties>-->
-    <!--            <property name="checkSingleIfStmt" value="false"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
-    <!--    <rule ref="category/java/codestyle.xml/ClassNamingConventions">-->
-    <!--        <properties>-->
-    <!--            <property name="utilityClassPattern" value="[A-Z][a-zA-Z0-9]*"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
 
     <rule ref="category/java/design.xml">
         <exclude name="AvoidCatchingGenericException"/>
-        <!--        <exclude name="CyclomaticComplexity"/> &lt;!&ndash; configured later &ndash;&gt;-->
-        <!--        <exclude name="ExcessiveClassLength"/>-->
         <exclude name="ExcessiveMethodLength"/>
-        <!--        <exclude name="ExcessiveParameterList"/> &lt;!&ndash; configured later &ndash;&gt;-->
-        <!--        <exclude name="ExcessivePublicCount"/>-->
-        <!--        <exclude name="GodClass"/>-->
         <exclude name="SignatureDeclareThrowsException"/> <!-- configured later -->
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
         <exclude name="NPathComplexity"/>
-        <!--        <exclude name="TooManyMethods"/>-->
     </rule>
-    <!--    <rule ref="category/java/design.xml/CyclomaticComplexity">-->
-    <!--        <properties>-->
-    <!--            <property name="methodReportLevel" value="11"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
-    <!--    <rule ref="category/java/design.xml/ExcessiveParameterList">-->
-    <!--        <properties>-->
-    <!--            <property name="minimum" value="11"/>-->
-    <!--        </properties>-->
-    <!--    </rule>-->
     <rule ref="category/java/design.xml/SignatureDeclareThrowsException">
         <properties>
             <property name="IgnoreJUnitCompletely" value="true"/>
@@ -117,8 +56,6 @@
 
     <rule ref="category/java/errorprone.xml">
         <exclude name="AvoidDuplicateLiterals"/>
-        <!--        <exclude name="AvoidFieldNameMatchingTypeName"/>-->
-        <!--        <exclude name="AvoidFieldNameMatchingMethodName"/>-->
         <exclude name="AvoidLiteralsInIfCondition"/>
         <exclude name="BeanMembersShouldSerialize"/>
         <exclude name="CloseResource"/>
@@ -130,10 +67,7 @@
         <exclude name="DoNotUseThreads"/>
     </rule>
 
-    <rule ref="category/java/performance.xml">
-        <!--        <exclude name="SimplifyStartsWith"/>-->
-        <!--        <exclude name="AvoidInstantiatingObjectsInLoops"/>-->
-    </rule>
+    <rule ref="category/java/performance.xml"/>
 
     <rule ref="category/java/security.xml"/>
 </ruleset>
