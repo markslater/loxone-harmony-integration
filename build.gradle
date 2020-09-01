@@ -47,6 +47,15 @@ dependencies {
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.6.2'
 }
 
+pmd {
+    ruleSetFiles = files('tools/pmd-ruleset.xml')
+    ruleSets = []
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
 jar {
     manifest {
         attributes 'Main-Class': 'harmonyintegration.LoxoneHarmonyIntegration'
