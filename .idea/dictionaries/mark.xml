@@ -6,6 +6,7 @@
       <w>keepalive</w>
       <w>loxone</w>
       <w>startactivity</w>
+      <w>xmlns</w>
     </words>
   </dictionary>
 </component>
