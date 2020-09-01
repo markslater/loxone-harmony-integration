@@ -1,4 +1,4 @@
-package harmony;
+package harmonyintegration.harmony;
 
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;

@@ -1,4 +1,4 @@
-package loxone;
+package harmonyintegration.loxone;
 
 public final class LoxoneCommandFailureException extends Exception {
     LoxoneCommandFailureException(final String message) {

@@ -1,4 +1,4 @@
-package harmony;
+package harmonyintegration.harmony;
 
 import org.junit.jupiter.api.Test;
 

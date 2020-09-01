@@ -1,7 +1,9 @@
-import harmony.SmackHarmonyHub;
-import loxone.HttpLoxone;
-import loxone.LoxoneCommandFailureException;
-import webserver.SpinneruleHttpSwitcherOfferService;
+package harmonyintegration;
+
+import harmonyintegration.harmony.SmackHarmonyHub;
+import harmonyintegration.loxone.HttpLoxone;
+import harmonyintegration.loxone.LoxoneCommandFailureException;
+import harmonyintegration.webserver.SpinneruleHttpSwitcherOfferService;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;

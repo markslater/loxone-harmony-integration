@@ -1,6 +1,6 @@
-package webserver;
+package harmonyintegration.webserver;
 
-import harmony.HarmonyHub;
+import harmonyintegration.harmony.HarmonyHub;
 import net.sourceforge.sorb.Service;
 import net.sourceforge.spinnerule.*;
 

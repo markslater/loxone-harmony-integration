@@ -1,4 +1,4 @@
-package harmony;
+package harmonyintegration.harmony;
 
 import com.google.common.base.Splitter;
 

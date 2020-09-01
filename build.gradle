@@ -49,7 +49,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'LoxoneHarmonyIntegration'
+        attributes 'Main-Class': 'harmonyintegration.LoxoneHarmonyIntegration'
     }
 }
 

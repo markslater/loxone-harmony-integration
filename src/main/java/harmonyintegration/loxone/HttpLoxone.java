@@ -1,4 +1,4 @@
-package loxone;
+package harmonyintegration.loxone;
 
 import net.sourceforge.sorb.Service;
 import net.sourceforge.urin.Fragment;
