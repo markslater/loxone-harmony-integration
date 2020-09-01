@@ -232,7 +232,7 @@ public final class SmackHarmonyHub implements Service<HarmonyHub> {
                 }
             };
         } catch (SmackException | IOException | XMPPException | OaIdentity.OaIdentityParseException | InterruptedException e) {
-            throw new RuntimeException("Failed to start Smack Harmony client", e);
+            throw new SmackHarmonyHubStartupException("Failed to start Smack Harmony client", e);
             // TODO audit and restart me ??
         }
     }

@@ -28,7 +28,7 @@ public final class LoxoneHarmonyIntegration {
                             try {
                                 return new SpinneruleHttpSwitcherOfferService(harmonyHub, 6789);
                             } catch (IOException e) {
-                                throw new RuntimeException(e); // TODO Eurgh
+                                throw new LoxoneHarmonyIntegrationStartupException("Failed to start", e); // TODO Eurgh
                             }
                         })
                         .start();
