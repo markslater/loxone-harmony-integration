@@ -26,6 +26,12 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
 dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '29.0-jre'
     implementation group: 'net.sourceforge.argo', name: 'argo', version: '5.13'
